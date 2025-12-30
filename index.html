@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QR Quiz</title>
+  <style>
+    body { font-family: system-ui, sans-serif; text-align:center; margin:50px 16px; background: powderblue; }
+    #wrap { display:inline-block; background:#fff; padding:20px; border-radius:14px; }
+    #qr { width: 280px; height: 280px; object-fit: contain; }
+    .btns { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    button { font-size:18px; padding:10px 16px; cursor:pointer; }
+    #answerBox { margin-top:16px; font-size:22px; background:#000; color:#fff; padding:14px 18px; border-radius:10px; min-height: 1.2em; }
+    #meta { margin-top:10px; opacity:0.7; font-size:14px; }
+  </style>
+</head>
+<body>
+
+  <div id="wrap">
+    <img id="qr" alt="QR code" src="" />
+    <div id="answerBox">Klik “Toon antwoord”</div>
+    <div class="btns">
+      <button id="reveal">Toon antwoord</button>
+      <button id="next">Volgende</button>
+    </div>
+    <div id="meta"></div>
+  </div>
+
+  <script>
+    // 1) Maak je quiz-items: QR-bestand + correct antwoord
+    const items = [
+      { qr: "bday-suuster-40/qrs/code1.png", answer: "2003" },
+      { qr: "bday-suuster-40/qrs/code2.png", answer: "2007 & 2014" },
+      { qr: "bday-suuster-40/qrs/code3.png", answer: "2021" },
+    ];
+
+    // 2) Shuffle per ronde zodat je niet herhaalt tot alles geweest is
+    let ronde = [];
+    let index = 0;
+    let current = null;
+    let revealed = false;
+
+    function shuffle(a){
+      for (let i=a.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function nieuweRonde(){
+      ronde = shuffle([...items]);
+      index = 0;
+    }
+
+    function render(){
+      // QR tonen
+      document.getElementById("qr").src = current.qr;
+
+      // antwoord verbergen of tonen
+      const box = document.getElementById("answerBox");
+      box.textContent = revealed ? current.answer : "Klik “Toon antwoord”";
+
+      // meta (optioneel)
+      document.getElementById("meta").textContent =
+        `Vraag ${index} van ${ronde.length} (antwoord ${revealed ? "zichtbaar" : "verborgen"})`;
+    }
+
+    function volgende(){
+      if (index >= ronde.length) nieuweRonde();
+      current = ronde[index];
+      index++;
+
+      revealed = false;   // reset antwoord
+      render();
+    }
+
+    document.getElementById("reveal").addEventListener("click", () => {
+      revealed = true;
+      render();
+    });
+
+    document.getElementById("next").addEventListener("click", volgende);
+
+    // Start
+    nieuweRonde();
+    volgende();
+  </script>
+</body>
+</html>
