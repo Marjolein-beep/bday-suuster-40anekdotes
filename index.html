@@ -55,7 +55,10 @@
 
     function render(){
       // QR tonen
-      document.getElementById("qr").src = current.qr;
+      const img = document.getElementById("qr");
+img.onerror = () => document.getElementById("meta").textContent = "❌ Kon niet laden: " + img.src;
+img.onload  = () => document.getElementById("meta").textContent = "✅ Geladen: " + img.src;
+img.src = current.qr;
 
       // antwoord verbergen of tonen
       const box = document.getElementById("answerBox");
