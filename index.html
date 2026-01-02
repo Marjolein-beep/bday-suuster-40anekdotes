@@ -5,13 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QR Quiz</title>
   <style>
-    body { font-family: system-ui, sans-serif; text-align:center; margin:50px 16px; background: powderblue; }
-    #wrap { display:inline-block; background:#fff; padding:20px; border-radius:14px; }
-    #qr { width: 280px; height: 280px; object-fit: contain; }
-    .btns { margin-top:16px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-    button { font-size:18px; padding:10px 16px; cursor:pointer; }
-    #answerBox { margin-top:16px; font-size:22px; background:#000; color:#fff; padding:14px 18px; border-radius:10px; min-height: 1.2em; }
-    #meta { margin-top:10px; opacity:0.7; font-size:14px; }
+    body {
+      font-family: system-ui, sans-serif;
+      text-align: center;
+      margin: 50px 16px;
+      background: powderblue;
+    }
+    #wrap {
+      display: inline-block;
+      background: #fff;
+      padding: 20px;
+      border-radius: 14px;
+    }
+    #qr {
+      width: 280px;
+      height: 280px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .btns {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      font-size: 18px;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+    #answerBox {
+      margin-top: 16px;
+      font-size: 22px;
+      background: #000;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 10px;
+      min-height: 1.2em;
+    }
+    #meta {
+      margin-top: 12px;
+      opacity: 0.8;
+      font-size: 14px;
+      word-break: break-word;
+    }
   </style>
 </head>
 <body>
@@ -19,19 +57,87 @@
   <div id="wrap">
     <img id="qr" alt="QR code" src="" />
     <div id="answerBox">Klik “Toon antwoord”</div>
+
     <div class="btns">
       <button id="reveal">Toon antwoord</button>
       <button id="next">Volgende</button>
     </div>
+
     <div id="meta"></div>
   </div>
 
   <script>
-    // 1) Maak je quiz-items: QR-bestand + correct antwoord
+    // 🔧 Debug-modus (true = meldingen zichtbaar, false = stil)
+    const DEBUG = false;
+
+    /**
+     * ✅ LAATSTE WERKENDE VERSIE (GitHub Pages)
+     * Repo naam: bday-suus-40-suuster-anekdotes
+     *
+     * Upload-structuur in repo-root:
+     * - index.html  (dit bestand)
+     * - qrs/        (map)
+     *    - code1.png
+     *    - code2.png
+     *    - code3.png
+     *
+     * GitHub Pages: Settings → Pages → Deploy from branch → main → /(root)
+     */
+
+    // ⬇️ Pas alleen je GitHub gebruikersnaam aan als die ooit verandert
+    const USERNAME = "marjolein-beep";
+    const REPO = "bday-suus-40-suuster-anekdotes";
+    const BASE = `https://${USERNAME}.github.io/${REPO}`;
+
+    // 1) QR-items: QR-bestand + correct antwoord
     const items = [
-      { qr: "/bday-suuster-40anekdotes/qrs/code1.png", answer: "2003" },
-      { qr: "/bday-suuster-40anekdotes/qrs/code2.png", answer: "2007 & 2014" },
-      { qr: "/bday-suuster-40anekdotes/qrs/code3.png", answer: "2021" },
+      { qr: `${BASE}/qrs/code1.png`, answer: "2003" },
+      { qr: `${BASE}/qrs/code2.png`, answer: "2007 & 2014" },
+      { qr: `${BASE}/qrs/code3.png`, answer: "2021" },
+      { qr: `${BASE}/qrs/code4.png`, answer: "2018" },
+      { qr: `${BASE}/qrs/code5.png`, answer: "2025" },
+      { qr: `${BASE}/qrs/code6.png`, answer: "2025" },
+      { qr: `${BASE}/qrs/code7.png`, answer: "2024" },
+      { qr: `${BASE}/qrs/code8.png`, answer: "2022" },
+      { qr: `${BASE}/qrs/code9.png`, answer: "2020" },
+      { qr: `${BASE}/qrs/code10.png`, answer: "2021" },
+      { qr: `${BASE}/qrs/code11.png`, answer: "2016" },
+      { qr: `${BASE}/qrs/code12.png`, answer: "Wanneer niet!! Dus elk antwoord is goed haha" },
+      { qr: `${BASE}/qrs/code13.png`, answer: "2016" },
+      { qr: `${BASE}/qrs/code14.png`, answer: "2022" },
+      { qr: `${BASE}/qrs/code15.png`, answer: "2017" },
+      { qr: `${BASE}/qrs/code16.png`, answer: "2025" },
+      { qr: `${BASE}/qrs/code17.png`, answer: "2020" },
+      { qr: `${BASE}/qrs/code18.png`, answer: "2025" },
+      { qr: `${BASE}/qrs/code19.png`, answer: "1986" },
+      { qr: `${BASE}/qrs/code20.png`, answer: "1989" },
+      { qr: `${BASE}/qrs/code21.png`, answer: "2001 in Luxemburg of 2005 in Friesland" },
+      { qr: `${BASE}/qrs/code22.png`, answer: "2025" },
+      { qr: `${BASE}/qrs/code23.png`, answer: "1998" },
+      { qr: `${BASE}/qrs/code24.png`, answer: "1996" },
+      { qr: `${BASE}/qrs/code25.png`, answer: "1999" },
+      { qr: `${BASE}/qrs/code26.png`, answer: "2014" },
+      { qr: `${BASE}/qrs/code27.png`, answer: "2016" },
+      { qr: `${BASE}/qrs/code28.png`, answer: "2010" },
+      { qr: `${BASE}/qrs/code29.png`, answer: "2018" },
+      { qr: `${BASE}/qrs/code30.png`, answer: "2019" },
+      { qr: `${BASE}/qrs/code31.png`, answer: "2015" },
+      { qr: `${BASE}/qrs/code32.png`, answer: "2021" },
+      { qr: `${BASE}/qrs/code33.png`, answer: "2014" },
+      { qr: `${BASE}/qrs/code34.png`, answer: "2020" },
+      { qr: `${BASE}/qrs/code35.png`, answer: "2010" },
+      { qr: `${BASE}/qrs/code36.png`, answer: "2003" },
+      { qr: `${BASE}/qrs/code37.png`, answer: "2013" },
+      { qr: `${BASE}/qrs/code38.png`, answer: "2017" },
+      { qr: `${BASE}/qrs/code39.png`, answer: "2023" },
+      { qr: `${BASE}/qrs/code40.png`, answer: "2006" },
+      { qr: `${BASE}/qrs/code41.png`, answer: "2016" },
+      { qr: `${BASE}/qrs/code42.png`, answer: "2019" },
+      { qr: `${BASE}/qrs/code43.png`, answer: "2018" },
+      { qr: `${BASE}/qrs/code44.png`, answer: "2017" },
+      { qr: `${BASE}/qrs/code45.png`, answer: "2022" },
+       // Voeg hier meer items toe...
+      // { qr: `${BASE}/qrs/code4.png`, answer: "..." },
     ];
 
     // 2) Shuffle per ronde zodat je niet herhaalt tot alles geweest is
@@ -40,41 +146,58 @@
     let current = null;
     let revealed = false;
 
-    function shuffle(a){
-      for (let i=a.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
+    function shuffle(a) {
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
       }
       return a;
     }
 
-    function nieuweRonde(){
+    function nieuweRonde() {
       ronde = shuffle([...items]);
       index = 0;
     }
 
-    function render(){
-      // QR tonen
+    function render() {
       const img = document.getElementById("qr");
-img.onerror = () => document.getElementById("meta").textContent = "❌ Kon niet laden: " + img.src;
-img.onload  = () => document.getElementById("meta").textContent = "✅ Geladen: " + img.src;
-img.src = current.qr;
+      const meta = document.getElementById("meta");
+      const box  = document.getElementById("answerBox");
 
-      // antwoord verbergen of tonen
-      const box = document.getElementById("answerBox");
+      if (!current) {
+        meta.textContent = "❌ current is null (er is nog geen item geselecteerd).";
+        return;
+      }
+
+      // Debug: toont exact wat er geladen wordt (handig tot alles stabiel is)
+      meta.textContent = "Probeer te laden: " + current.qr;
+
+      img.onload = () => {
+        meta.textContent = "✅ Geladen: " + img.src;
+      };
+
+      img.onerror = () => {
+        meta.textContent = "❌ Kon niet laden: " + img.src;
+      };
+
+      img.src = current.qr;
+
       box.textContent = revealed ? current.answer : "Klik “Toon antwoord”";
-
-      // meta (optioneel)
-      document.getElementById("meta").textContent =
-        `Vraag ${index} van ${ronde.length} (antwoord ${revealed ? "zichtbaar" : "verborgen"})`;
     }
 
-    function volgende(){
-      if (index >= ronde.length) nieuweRonde();
+    function volgende() {
+      if (!items.length) {
+        document.getElementById("meta").textContent = "❌ items is leeg. Voeg QR-items toe.";
+        return;
+      }
+      if (ronde.length === 0 || index >= ronde.length) {
+        nieuweRonde();
+      }
+
       current = ronde[index];
       index++;
 
-      revealed = false;   // reset antwoord
+      revealed = false;
       render();
     }
 
